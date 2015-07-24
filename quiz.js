@@ -10,13 +10,25 @@ var Question = function (question, answer, questionId) {
 
 }
 
+var User = function (name) {
+	this.name = name;
+	this.accumulatedPoints = 0;
+	this.question = 0;
+}
+
 var Quiz = function () {
 	this.questionList = [];
+	this.usersArray = [];
+	//this.userId = 0;
 	this.questionNumber = 0;
 	this.totalPoints = 0;
 	this.start = true;
 
 }
+
+Quiz.prototype.initQuiz = function() {
+	this.askUser();
+};
 
 Quiz.prototype.gameOn = function() {
 	if (this.start === true){
@@ -25,11 +37,33 @@ Quiz.prototype.gameOn = function() {
 	//console.log(this.questionNumber);
 	
 	if (this.questionNumber < this.questionList.length) {
-		this.showQuestion(this.questionNumber);
+	this.showQuestion(this.questionNumber);
 	} else	{
-		console.log ('\n\n\End of the Game\n\n Yout earned a total of ' + this.totalPoints + ' points!');
+	console.log ('\n\n\End of the Game\n\n Yout earned a total of ' + this.totalPoints + ' points!');
 	}
 };
+
+Quiz.prototype.askUser = function() {
+	userprompt = {prompt: 'What is your username?\n', default: '(username)'};
+	read(userprompt, this.checkUser.bind(this));
+};
+
+Quiz.prototype.checkUser = function(err, userName) {
+	if (this.usersArray.indexOf(userName) < 0) {
+		var userName = new User (userName);
+		this.usersArray.push(userName);
+		this.userId = this.usersArray.indexOf(userName);
+		//console.log (this.usersArray);
+		console.log ('  Hello ' + this.usersArray[this.userId].name + ' welcome to the quiz game')
+		console.log ('\n\n\n  This game consists of ' + this.questionList.length + ' questions');
+		console.log ('  Good Luck!!! \n\n');
+		this.gameOn();
+
+	} else {
+		this.loadUser();
+	}
+};
+
 
 Quiz.prototype.shuffleQuestions = function(questionList) {
 
@@ -80,9 +114,9 @@ Quiz.prototype.checkAnswer = function (err, answer) {
 		
 		if (answer.toLowerCase() === questionAnswer.toLowerCase()) {
 			this.totalPoints += this.questionList[this.questionNumber].points;
-			console.log('Points: ' + this.totalPoints);
+			console.log('\n Points: ' + this.totalPoints);
 			this.questionNumber++;
-			console.log ('CORRECT!!!\n');
+			console.log ('\n\n CORRECT!!!\n');
 			this.start = false;
 			this.gameOn();
 		}
@@ -102,6 +136,12 @@ Quiz.prototype.failAnswer = function() {
 	console.log (failMessagge);
 };
 
+
+
+
+
+//Define the questions and create the game
+
 var question1 = new Question ('The country of Italy includes two major islands. Which is the largest one?',
 							'Sicily', 1);
 var question2 = new Question ('How may legs has a common dog?', '4', 2);
@@ -117,8 +157,9 @@ var question10 = new Question ('Who said, "Vini, vidi, vici"?', 'Caesar',	10);
 
 
 var quiz = new Quiz();
-quiz.addQuestion([question1 ,question2, question3, question4, question5,
-				 question6, question7, question8, question9, question10]);
+quiz.addQuestion([question1 ,question2, question3, question4, question5]);//,
+				 //question6, question7, question8, question9, question10]);
 
-quiz.gameOn();
+quiz.initQuiz();
+//quiz.gameOn();
 
