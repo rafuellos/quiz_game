@@ -6,6 +6,7 @@ var Question = function (question, answer, questionId) {
 	this.answer = answer;
 	this.questionId = questionId;
 	this.points = 5;
+	this.bonusQuestion = false;
 
 }
 
@@ -25,8 +26,7 @@ Quiz.prototype.gameOn = function() {
 	
 	if (this.questionNumber < this.questionList.length) {
 		this.showQuestion(this.questionNumber);
-	} else
-	{
+	} else	{
 		console.log ('\n\n\End of the Game\n\n Yout earned a total of ' + this.totalPoints + ' points!');
 	}
 };
@@ -45,7 +45,9 @@ Quiz.prototype.shuffleQuestions = function(questionList) {
 };
 
 Quiz.prototype.showQuestion = function(number) {
-
+	if (this.questionList[number].bonusQuestion === true){
+		console.log("This a bonus question. You will earn double points if answer correctly");
+	}
 	response = {prompt: '\n\n' + this.questionList[number].question + '?\n>', default: 'One single word'};
 	read(response, this.checkAnswer.bind(this));
 	
@@ -54,7 +56,16 @@ Quiz.prototype.showQuestion = function(number) {
 
 Quiz.prototype.addQuestion = function(questions) {
 	this.questionList = this.questionList.concat(questions);
+	this.selectBonusQuestion();
 	
+};
+
+Quiz.prototype.selectBonusQuestion = function() {
+	var randomQuestion = this.questionList[Math.floor(Math.random() * this.questionList.length)];	
+	//console.log (randomQuestion);
+	randomQuestion.points *= 2;
+	randomQuestion.bonusQuestion = true;
+
 };
 	
 
